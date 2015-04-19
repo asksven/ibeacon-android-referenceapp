@@ -53,9 +53,15 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
 		Log.d(TAG, "setting up background monitoring for beacons and power saving");
 		
-		// wake up the app when a beacon is seen
+		// wake up the app when any beacon is seen
 		Region region = new Region("backgroundRegion", null, null, null);
 		m_regionBootstrap = new RegionBootstrap(this, region);
+		
+		// Building a region for a specific beacon
+		// see also https://altbeacon.github.io/android-beacon-library/javadoc/org/altbeacon/beacon/Region.html
+		// Region region = new Region("some-unique-id", Identifier.parse(Constants.BT_UUID), 
+		//  Identifier.fromInt(Constants.BT_MAJOR), Identifier.fromInt(Constants.BT_MINOR));
+
 		
 		// simply constructing this class and holding a reference to it in your
 		// custom Application
