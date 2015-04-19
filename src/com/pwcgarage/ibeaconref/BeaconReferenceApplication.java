@@ -29,7 +29,7 @@ import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.RegionBootstrap;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 
-import com.pwcgarage.ibeanconref.R;
+import com.pwcgarage.ibeaconref.R;
 
 /**
  * @author asksven

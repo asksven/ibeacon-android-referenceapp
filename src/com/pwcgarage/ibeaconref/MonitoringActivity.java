@@ -29,7 +29,7 @@ import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.Region;
 
-import com.pwcgarage.ibeanconref.R;
+import com.pwcgarage.ibeaconref.R;
 
 /**
  * @author asksven
