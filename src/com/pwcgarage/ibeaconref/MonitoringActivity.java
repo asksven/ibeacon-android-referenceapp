@@ -14,20 +14,15 @@
 package com.pwcgarage.ibeaconref;
 
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.TextView;
 
-import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.MonitorNotifier;
-import org.altbeacon.beacon.Region;
 
 import com.pwcgarage.ibeaconref.R;
 
@@ -36,8 +31,8 @@ import com.pwcgarage.ibeaconref.R;
  */
 public class MonitoringActivity extends Activity
 {
-	protected static final String TAG = "MonitoringActivity";
-	private BeaconManager beaconManager;
+	protected static final String TAG 	= "MonitoringActivity";
+	private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -48,6 +43,7 @@ public class MonitoringActivity extends Activity
 		verifyBluetooth();
 		logToDisplay("Application just launched");
 	}
+	
 
 	public void onRangingClicked(View view)
 	{
@@ -116,9 +112,9 @@ public class MonitoringActivity extends Activity
 		runOnUiThread(new Runnable() {
 			public void run()
 			{
-				EditText editText = (EditText) MonitoringActivity.this
+				TextView tv = (TextView) MonitoringActivity.this
 						.findViewById(R.id.monitoringText);
-				editText.append(line + "\n");
+				tv.setText(line + "\n" + tv.getText());
 			}
 		});
 	}

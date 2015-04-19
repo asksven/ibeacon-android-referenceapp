@@ -18,14 +18,11 @@ import java.util.Collection;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.util.Log;
-import android.widget.EditText;
+import android.widget.TextView;
 
-import org.altbeacon.beacon.AltBeacon;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
@@ -36,9 +33,8 @@ import com.pwcgarage.ibeaconref.R;
  */
 public class RangingActivity extends Activity implements BeaconConsumer
 {
-	protected static final String TAG = "RangingActivity";
-	private BeaconManager beaconManager = BeaconManager
-			.getInstanceForApplication(this);
+	protected static final String TAG 	= "RangingActivity";
+	private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -81,12 +77,10 @@ public class RangingActivity extends Activity implements BeaconConsumer
 			{
 				if (beacons.size() > 0)
 				{
-					EditText editText = (EditText) RangingActivity.this
-							.findViewById(R.id.rangingText);
 					Beacon firstBeacon = beacons.iterator().next();
-					logToDisplay("The first beacon " + firstBeacon.toString()
-							+ " is about " + firstBeacon.getDistance()
-							+ " meters away.");
+					logToDisplay(firstBeacon.getBluetoothAddress()
+							+ " is " + String.format("%1$,.2f", firstBeacon.getDistance())
+							+ " m away.");
 				}
 			}
 		});
@@ -104,9 +98,9 @@ public class RangingActivity extends Activity implements BeaconConsumer
 		runOnUiThread(new Runnable() {
 			public void run()
 			{
-				EditText editText = (EditText) RangingActivity.this
+				TextView tv = (TextView) RangingActivity.this
 						.findViewById(R.id.rangingText);
-				editText.append(line + "\n");
+				tv.setText(line + "\n" + tv.getText());
 			}
 		});
 	}

@@ -5,27 +5,19 @@
     tools:context=".MonitoringActivity" >
 
     <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="15dp"
         android:text="Monitoring Events:" />
 
-    <EditText
+    <TextView
         android:id="@+id/monitoringText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="36dp"
-        android:ems="10"
-        android:gravity="left|top"
-        android:inputType="textMultiLine" >
-
-        <requestFocus />
-    </EditText>
+        android:layout_below="@+id/textViewTitle"
+        android:layout_marginTop="15dp"
+        android:ems="10" />
 
     <Button
         android:id="@+id/Button01"
@@ -34,6 +26,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/monitoringText"
         android:onClick="onRangingClicked"
+        android:layout_marginTop="15dp"
         android:text="Start Ranging" />
 
 </RelativeLayout>

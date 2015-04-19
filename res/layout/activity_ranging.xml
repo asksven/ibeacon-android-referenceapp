@@ -4,17 +4,19 @@
     android:layout_height="match_parent"
     tools:context=".RangingActivity" >
 
-    <EditText
-        android:id="@+id/rangingText"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="14dp"
-        android:ems="10"
-        android:gravity="left|top"
-        android:inputType="textMultiLine" >
-    </EditText>
+        android:layout_marginTop="15dp"
+        android:text="Monitoring Nearest Beacon:" />
+
+    <TextView
+        android:id="@+id/rangingText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewTitle"
+        android:layout_marginTop="15dp"
+        android:ems="10" />
 
 </RelativeLayout>
