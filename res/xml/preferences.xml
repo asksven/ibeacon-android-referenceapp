@@ -1,0 +1,12 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory 
+        android:title="@string/debug_prefs_title"
+        android:key="debug_prefs">
+        <CheckBoxPreference
+            android:key="pref_use_debug_eventhub"
+            android:summary="@string/pref_debug_eventhub_summary"
+            android:title="@string/pref_debug_eventhub_title"
+            android:defaultValue="false"/>
+    </PreferenceCategory>
+    ...
+</PreferenceScreen>
