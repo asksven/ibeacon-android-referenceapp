@@ -141,7 +141,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 	{
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(
 				this).setContentTitle("Beacon Reference Application")
-				.setContentText("An beacon is nearby.")
+				.setContentText("A beacon is nearby.")
 				.setSmallIcon(R.drawable.ic_stat_ic_action_location_found);
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 		stackBuilder.addNextIntent(new Intent(this, MonitoringActivity.class));
