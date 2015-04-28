@@ -8,8 +8,13 @@
         android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    
+    <!-- required for accessing beacons -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    
+    <!-- required to geenrate UUIDs -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name="BeaconReferenceApplication"

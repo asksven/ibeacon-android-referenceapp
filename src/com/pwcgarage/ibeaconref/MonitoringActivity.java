@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.altbeacon.beacon.BeaconManager;
+
 import com.pwcgarage.ibeaconref.R;
 
 /**

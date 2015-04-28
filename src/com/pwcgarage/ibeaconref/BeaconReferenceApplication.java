@@ -30,6 +30,8 @@ import org.altbeacon.beacon.startup.RegionBootstrap;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 
 import com.pwcgarage.ibeaconref.R;
+import com.pwcgarage.ibeaconref.R.drawable;
+import com.pwcgarage.ibeaconref.utils.DeviceUuidFactory;
 
 /**
  * @author asksven
@@ -45,6 +47,10 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 	public void onCreate()
 	{
 		super.onCreate();
+		
+		// make sure that the device has a UUID
+		Log.d(TAG, "Device UUID=" + new DeviceUuidFactory(this).getDeviceUuid());
+		
 		BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
 
 		// beaconinside specific parser
