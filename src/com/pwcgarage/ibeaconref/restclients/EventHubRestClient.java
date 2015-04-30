@@ -27,6 +27,8 @@ import android.util.Log;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.pwcgarage.ibeaconref.BeaconReferenceApplication;
+import com.pwcgarage.ibeaconref.eventbus.EventBus;
+import com.pwcgarage.ibeaconref.eventbus.EventHubCallStatusEvent;
 import com.pwcgarage.ibeaconref.utils.DeviceUuidFactory;
 
 /**
@@ -35,10 +37,6 @@ import com.pwcgarage.ibeaconref.utils.DeviceUuidFactory;
 public class EventHubRestClient
 {
 
-	private static final String URL = "https://ibeacon-referenceapp-test-ns.servicebus.windows.net/ibeacon-referenceapp-test/publishers/ibeaconref/messages";
-
-	// The shared access signature
-	private static final String SA_SIG = "SharedAccessSignature sr=https%3a%2f%2fibeacon-referenceapp-test-ns.servicebus.windows.net%2fibeacon-referenceapp-test&sig=0v8gsMCah1W4ZWLCr9J%2fDlilwaXmdnUfHYYhLtg3ta0%3d&se=1430320958&skn=android-app";
 	private static AsyncHttpClient m_httpClient = null;
 	private static EventHubRestClient m_client = null;
 	private static final String TAG = "EventHubRestClient";
@@ -54,7 +52,7 @@ public class EventHubRestClient
 		{
 			m_client = new EventHubRestClient();
 			m_httpClient = new AsyncHttpClient();
-			m_httpClient.addHeader("Authorization", SA_SIG);
+			m_httpClient.addHeader("Authorization", Constants.EVENTHUB_SA_SIG);
 
 		}
 
@@ -79,7 +77,7 @@ public class EventHubRestClient
 			params.put("Region", region);
 			params.put("Action", action);
 			StringEntity entity = new StringEntity(params.toString());
-			m_httpClient.post(ctx, URL, entity, "application/atom+xml;type=entry;charset=utf-8",
+			m_httpClient.post(ctx, Constants.EVENTHUB_URL, entity, "application/atom+xml;type=entry;charset=utf-8",
 					new AsyncHttpResponseHandler() {
 
 						@Override
@@ -88,6 +86,8 @@ public class EventHubRestClient
 						{
 							// TODO Auto-generated method stub
 							Log.d(TAG, "Request failed");
+							// post event to eventbus
+							EventBus.getInstance().post(new EventHubCallStatusEvent(EventHubCallStatusEvent.Type.COMPLETED,0));
 							
 						}
 
@@ -97,7 +97,8 @@ public class EventHubRestClient
 						{
 							// TODO Auto-generated method stub
 							Log.d(TAG, "Request succeeded");
-							
+							// post event to eventbus
+							EventBus.getInstance().post(new EventHubCallStatusEvent(EventHubCallStatusEvent.Type.COMPLETED,1));
 						}
 					});
 		} catch (Exception ex)

@@ -24,11 +24,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.altbeacon.beacon.BeaconManager;
 
 import com.pwcgarage.ibeaconref.R;
+import com.pwcgarage.ibeaconref.eventbus.EventBus;
+import com.pwcgarage.ibeaconref.eventbus.EventHubCallStatusEvent;
 import com.pwcgarage.ibeaconref.restclients.EventHubRestClient;
+import com.squareup.otto.Subscribe;
 
 /**
  * @author asksven
@@ -42,6 +46,10 @@ public class MonitoringActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		Log.d(TAG, "onCreate");
+		
+		// register to the event bus
+		EventBus.getInstance().register(this);
+        
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_monitoring);
 		verifyBluetooth();
@@ -100,6 +108,13 @@ public class MonitoringActivity extends Activity
 	    }
 	    return false;
 	}
+	
+    @Subscribe
+    public void handleSomeEvent(EventHubCallStatusEvent event)
+    {
+        Toast.makeText(this,String.valueOf(event.getResultCode()),Toast.LENGTH_LONG).show();
+    }
+    
 	private void verifyBluetooth()
 	{
 		try
