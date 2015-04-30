@@ -24,6 +24,7 @@ import android.util.Log;
 
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.RegionBootstrap;
@@ -31,6 +32,7 @@ import org.altbeacon.beacon.startup.BootstrapNotifier;
 
 import com.pwcgarage.ibeaconref.R;
 import com.pwcgarage.ibeaconref.R.drawable;
+import com.pwcgarage.ibeaconref.restclients.EventHubRestClient;
 import com.pwcgarage.ibeaconref.utils.DeviceUuidFactory;
 
 /**
@@ -43,7 +45,11 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 	private BackgroundPowerSaver m_backgroundPowerSaver;
 	private boolean m_haveDetectedBeaconsSinceBoot = false;
 	private MonitoringActivity m_monitoringActivity = null;
-
+	public static final String ACTION_ENTER = "enter-beacon-proximity";
+	public static final String ACTION_LEAVE = "leave-beacon-proximity";
+	public static final String ACTION_TEST = "test-action";
+	public static final String ACTION_UNKNOWN = "unknown-action";
+	
 	public void onCreate()
 	{
 		super.onCreate();
@@ -60,14 +66,17 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 		Log.d(TAG, "setting up background monitoring for beacons and power saving");
 		
 		// wake up the app when any beacon is seen
-		Region region = new Region("backgroundRegion", null, null, null);
-		m_regionBootstrap = new RegionBootstrap(this, region);
+		//Region region = new Region("backgroundRegion", null, null, null);
+		//m_regionBootstrap = new RegionBootstrap(this, region);
 		
 		// Building a region for a specific beacon
 		// see also https://altbeacon.github.io/android-beacon-library/javadoc/org/altbeacon/beacon/Region.html
 		// Region region = new Region("some-unique-id", Identifier.parse(Constants.BT_UUID), 
 		//  Identifier.fromInt(Constants.BT_MAJOR), Identifier.fromInt(Constants.BT_MINOR));
 
+		Region regionHome = new Region("region-home", Identifier.parse("F0018B9B-7509-4C31-A905-1A27D39C003C"), 
+				Identifier.fromInt(31452), Identifier.fromInt(25352));
+		m_regionBootstrap = new RegionBootstrap(this, regionHome);
 		
 		// simply constructing this class and holding a reference to it in your
 		// custom Application
@@ -87,7 +96,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 	{
 		// In this example, this class sends a notification to the user whenever
 		// a Beacon matching a Region (defined above) are first seen.
-		Log.d(TAG, "did enter region.");
+		Log.d(TAG, "did enter region " + arg0.getUniqueId());
 		if (!m_haveDetectedBeaconsSinceBoot)
 		{
 			Log.d(TAG, "auto launching MainActivity");
@@ -109,7 +118,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 				// If the Monitoring Activity is visible, we log info about the
 				// beacons we have
 				// seen on its display
-				m_monitoringActivity.logToDisplay("I see a beacon again");
+				m_monitoringActivity.logToDisplay("I see a beacon: " + arg0.getUniqueId());
 			}
 			else
 			{
@@ -118,9 +127,12 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 				// the foreground, we send a notification to the user on
 				// subsequent detections.
 				Log.d(TAG, "Sending notification.");
-				sendNotification();
+				sendNotification(arg0);
 			}
 		}
+		
+		// Send the event to the event hub
+		EventHubRestClient.getInstance().sendEvent(this, arg0.getUniqueId(), ACTION_ENTER);
 	}
 
 	@Override
@@ -130,6 +142,10 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 		{
 			m_monitoringActivity.logToDisplay("I no longer see a beacon.");
 		}
+		
+		// Send the event to the event hub
+		EventHubRestClient.getInstance().sendEvent(this, region.getUniqueId(), ACTION_LEAVE);
+
 	}
 
 	@Override
@@ -143,11 +159,11 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 		}
 	}
 
-	private void sendNotification()
+	private void sendNotification(Region region)
 	{
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(
-				this).setContentTitle("Beacon Reference Application")
-				.setContentText("A beacon is nearby.")
+				this).setContentTitle(getResources().getString(R.string.app_name))
+				.setContentText(getResources().getString(R.string.notification_entered_region, region.getUniqueId()))
 				.setSmallIcon(R.drawable.ic_stat_ic_action_location_found);
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 		stackBuilder.addNextIntent(new Intent(this, MonitoringActivity.class));

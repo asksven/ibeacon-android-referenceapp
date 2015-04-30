@@ -5,5 +5,7 @@
     <string name="pref_debug_eventhub_summary">Check to use the debug Event Hub</string>
     <string name="pref_debug_eventhub_title">Debug EventHub</string>
     
+    <string name="notification_entered_region">You just entered region %s</string>
+    
     <string name="label_settings">Settings</string>
 </resources>

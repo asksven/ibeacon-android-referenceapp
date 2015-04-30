@@ -28,6 +28,7 @@ import android.widget.TextView;
 import org.altbeacon.beacon.BeaconManager;
 
 import com.pwcgarage.ibeaconref.R;
+import com.pwcgarage.ibeaconref.restclients.EventHubRestClient;
 
 /**
  * @author asksven
@@ -54,6 +55,11 @@ public class MonitoringActivity extends Activity
 		this.startActivity(myIntent);
 	}
 
+	public void onTestClicked(View view)
+	{
+		// send a test event
+		EventHubRestClient.getInstance().sendEvent(this, "", BeaconReferenceApplication.ACTION_TEST);
+	}
 	@Override
 	public void onResume()
 	{

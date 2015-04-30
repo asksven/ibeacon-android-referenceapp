@@ -29,4 +29,13 @@
         android:layout_marginTop="15dp"
         android:text="Start Ranging" />
 
+    <Button
+        android:id="@+id/Button02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/Button01"
+        android:onClick="onTestClicked"
+        android:layout_marginTop="15dp"
+        android:text="Test" />    
 </RelativeLayout>
