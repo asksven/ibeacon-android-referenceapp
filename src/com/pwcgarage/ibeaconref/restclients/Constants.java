@@ -18,6 +18,10 @@ package com.pwcgarage.ibeaconref.restclients;
  */
 public class Constants
 {
-	protected static final String EVENTHUB_URL = "<your-url-here>";
-	protected static final String EVENTHUB_SA_SIG = "<your-sa-signature-here>";
+	protected static final String EVENTHUB_URL = "http://<namespace>.servicebus.windows.net/<entityPath>";
+	protected static final String EVENTHUB_QUEUE_PATH = "publishers/<device-name>/messages";
+	protected static final String EVENTHUB_POLICY_NAME = "<policy-name>";
+	protected static final String EVENTHUB_POLICY_KEY= "<policy-key>";	
+	protected static final int EVENTHUB_TTL_MINUTES = 60;
+
 }

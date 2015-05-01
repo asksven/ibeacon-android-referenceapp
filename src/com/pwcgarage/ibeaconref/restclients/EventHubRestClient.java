@@ -30,6 +30,7 @@ import com.pwcgarage.ibeaconref.BeaconReferenceApplication;
 import com.pwcgarage.ibeaconref.eventbus.EventBus;
 import com.pwcgarage.ibeaconref.eventbus.EventHubCallStatusEvent;
 import com.pwcgarage.ibeaconref.utils.DeviceUuidFactory;
+import com.pwcgarage.ibeaconref.utils.SaSignatureTokenGenerator;
 
 /**
  * @author asksven
@@ -39,6 +40,7 @@ public class EventHubRestClient
 
 	private static AsyncHttpClient m_httpClient = null;
 	private static EventHubRestClient m_client = null;
+	private static long tokenExpiresAt = 0L;
 	private static final String TAG = "EventHubRestClient";
 
 	private void EventHubRestClient()
@@ -51,16 +53,39 @@ public class EventHubRestClient
 		if (m_client == null)
 		{
 			m_client = new EventHubRestClient();
-			m_httpClient = new AsyncHttpClient();
-			m_httpClient.addHeader("Authorization", Constants.EVENTHUB_SA_SIG);
+			m_httpClient = getRestClient();
 
 		}
 
 		return m_client;
 	}
+	
+	/** 
+	 * Returns an http client calid for a given time
+	 * @return
+	 */
+	private static AsyncHttpClient getRestClient()
+	{
+		AsyncHttpClient ret = new AsyncHttpClient();
+				
+		String SaSignature = SaSignatureTokenGenerator.generateSaSignatureToken(Constants.EVENTHUB_URL, Constants.EVENTHUB_POLICY_NAME, 
+				Constants.EVENTHUB_POLICY_KEY, Constants.EVENTHUB_TTL_MINUTES);
+		tokenExpiresAt = System.currentTimeMillis() + (Constants.EVENTHUB_TTL_MINUTES * 60L * 1000L);
+		
+		ret.addHeader("Authorization", SaSignature);
+
+		return ret;
+	}
 
 	public void sendEvent(Context ctx, String region, String action)
 	{
+		// check if our SAS Token has expired. If yes get a new REST client with a fresh token
+		if (System.currentTimeMillis() > tokenExpiresAt)
+		{
+			m_httpClient = getRestClient();
+		}
+		
+		// Assert parameters
 		if (!(action.equals(BeaconReferenceApplication.ACTION_ENTER)
 				|| action.equals(BeaconReferenceApplication.ACTION_LEAVE) || action
 					.equals(BeaconReferenceApplication.ACTION_TEST)))
@@ -77,25 +102,21 @@ public class EventHubRestClient
 			params.put("Region", region);
 			params.put("Action", action);
 			StringEntity entity = new StringEntity(params.toString());
-			m_httpClient.post(ctx, Constants.EVENTHUB_URL, entity, "application/atom+xml;type=entry;charset=utf-8",
+			m_httpClient.post(ctx, Constants.EVENTHUB_URL + "/" + Constants.EVENTHUB_QUEUE_PATH, entity, "application/atom+xml;type=entry;charset=utf-8",
 					new AsyncHttpResponseHandler() {
 
 						@Override
-						public void onFailure(int arg0, Header[] arg1,
-								byte[] arg2, Throwable arg3)
+						public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error)
 						{
-							// TODO Auto-generated method stub
-							Log.d(TAG, "Request failed");
+							Log.d(TAG, "Request failed with statusCode=" + statusCode + " with message=" + error.getMessage());
 							// post event to eventbus
 							EventBus.getInstance().post(new EventHubCallStatusEvent(EventHubCallStatusEvent.Type.COMPLETED,0));
 							
 						}
 
 						@Override
-						public void onSuccess(int arg0, Header[] arg1,
-								byte[] arg2)
+						public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
 						{
-							// TODO Auto-generated method stub
 							Log.d(TAG, "Request succeeded");
 							// post event to eventbus
 							EventBus.getInstance().post(new EventHubCallStatusEvent(EventHubCallStatusEvent.Type.COMPLETED,1));
