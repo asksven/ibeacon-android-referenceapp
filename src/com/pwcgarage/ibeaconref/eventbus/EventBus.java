@@ -44,7 +44,12 @@ public class EventBus
 	{
 		m_bus.register(subscriber);
 	}
-	
+
+	public void unregister(Object subscriber)
+	{
+		m_bus.unregister(subscriber);
+	}
+
 	public void post(AbstractEvent event)
 	{
 		m_bus.post(event);

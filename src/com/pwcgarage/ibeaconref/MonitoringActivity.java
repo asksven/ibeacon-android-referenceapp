@@ -79,6 +79,9 @@ public class MonitoringActivity extends Activity
 	@Override
 	public void onPause()
 	{
+		// unregister from the event bus
+				EventBus.getInstance().unregister(this);
+		        
 		super.onPause();
 		((BeaconReferenceApplication) this.getApplicationContext())
 				.setMonitoringActivity(null);
