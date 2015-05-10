@@ -134,8 +134,8 @@ public class MonitoringActivity extends Activity
 					@Override
 					public void onDismiss(DialogInterface dialog)
 					{
-						finish();
-						System.exit(0);
+						//finish();
+						//System.exit(0);
 					}
 				});
 				builder.show();
@@ -151,7 +151,7 @@ public class MonitoringActivity extends Activity
 				public void onDismiss(DialogInterface dialog)
 				{
 					finish();
-					System.exit(0);
+					//System.exit(0);
 				}
 			});
 			builder.show();
