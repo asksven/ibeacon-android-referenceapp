@@ -13,6 +13,8 @@
  */
 package com.pwcgarage.ibeaconref.eventbus;
 
+import android.util.Log;
+
 import com.squareup.otto.Bus;
 
 /**
@@ -23,6 +25,7 @@ public class EventBus
 {
 	private static EventBus m_singleton = null;
 	private static Bus m_bus = null;
+	private static String TAG = "EventBus";
 	
 	private void EventBus()
 	{
@@ -47,7 +50,15 @@ public class EventBus
 
 	public void unregister(Object subscriber)
 	{
-		m_bus.unregister(subscriber);
+		// make sure this won't cause an FC in case subscriber is not registered
+		try
+		{
+			m_bus.unregister(subscriber);
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "Error in unregister: " + e.getMessage());
+		}
 	}
 
 	public void post(AbstractEvent event)
