@@ -47,9 +47,6 @@ public class MonitoringActivity extends Activity
 	{
 		Log.d(TAG, "onCreate");
 		
-		// register to the event bus
-		EventBus.getInstance().register(this);
-        
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_monitoring);
 		verifyBluetooth();
@@ -72,6 +69,10 @@ public class MonitoringActivity extends Activity
 	public void onResume()
 	{
 		super.onResume();
+		
+		// register to the event bus
+		EventBus.getInstance().register(this);
+		
 		((BeaconReferenceApplication) this.getApplicationContext())
 				.setMonitoringActivity(this);
 	}
