@@ -30,6 +30,8 @@ import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.RegionBootstrap;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 
+import com.amazon.device.messaging.ADM;
+import com.amazon.device.messaging.development.ADMManifest;
 import com.pwcgarage.ibeaconref.R;
 import com.pwcgarage.ibeaconref.R.drawable;
 import com.pwcgarage.ibeaconref.restclients.EventHubRestClient;
@@ -178,5 +180,21 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 	public void setMonitoringActivity(MonitoringActivity activity)
 	{
 		this.m_monitoringActivity = activity;
+	}
+	
+	public static boolean isAdmAvailable()
+	{
+		boolean admAvailable = false ;
+		try
+		{
+		    Class.forName( "com.amazon.device.messaging.ADM" );
+		    admAvailable = true ;
+		}
+		catch (ClassNotFoundException e)
+		{
+			admAvailable = false;
+		}
+		
+		return admAvailable;
 	}
 }
