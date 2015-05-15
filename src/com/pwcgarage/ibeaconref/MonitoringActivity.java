@@ -13,6 +13,7 @@
  */
 package com.pwcgarage.ibeaconref;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,28 +32,45 @@ import org.altbeacon.beacon.BeaconManager;
 import com.pwcgarage.ibeaconref.R;
 import com.pwcgarage.ibeaconref.eventbus.EventBus;
 import com.pwcgarage.ibeaconref.eventbus.EventHubCallStatusEvent;
+import com.pwcgarage.ibeaconref.pushmessaging.GooglePushMessageHandler;
 import com.pwcgarage.ibeaconref.restclients.EventHubRestClient;
 import com.squareup.otto.Subscribe;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
+
+import com.google.android.gms.gcm.*;
+import com.microsoft.windowsazure.messaging.*;
+import com.microsoft.windowsazure.notifications.NotificationsManager;
 /**
  * @author asksven
  */
 public class MonitoringActivity extends Activity
 {
-	protected static final String TAG 	= "MonitoringActivity";
-	private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
+	protected static final String TAG = "MonitoringActivity";
+	private BeaconManager beaconManager = BeaconManager
+			.getInstanceForApplication(this);
+	
+	// GCM using Azure Notification Hubs stuff
+	// see http://azure.microsoft.com/en-us/documentation/articles/notification-hubs-android-get-started/
+	private GoogleCloudMessaging gcm;
+	private NotificationHub hub;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		Log.d(TAG, "onCreate");
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_monitoring);
 		verifyBluetooth();
 		logToDisplay("Application just launched");
+
+		// register with GCM
+		GooglePushMessageHandler.registerWithNotificationHubs(gcm, hub, this);
 	}
-	
 
 	public void onRangingClicked(View view)
 	{
@@ -63,16 +81,18 @@ public class MonitoringActivity extends Activity
 	public void onTestClicked(View view)
 	{
 		// send a test event
-		EventHubRestClient.getInstance().sendEvent(this, "", BeaconReferenceApplication.ACTION_TEST);
+		EventHubRestClient.getInstance().sendEvent(this, "",
+				BeaconReferenceApplication.ACTION_TEST);
 	}
+
 	@Override
 	public void onResume()
 	{
 		super.onResume();
-		
+
 		// register to the event bus
 		EventBus.getInstance().register(this);
-		
+
 		((BeaconReferenceApplication) this.getApplicationContext())
 				.setMonitoringActivity(this);
 	}
@@ -81,8 +101,8 @@ public class MonitoringActivity extends Activity
 	public void onPause()
 	{
 		// unregister from the event bus
-				EventBus.getInstance().unregister(this);
-		        
+		EventBus.getInstance().unregister(this);
+
 		super.onPause();
 		((BeaconReferenceApplication) this.getApplicationContext())
 				.setMonitoringActivity(null);
@@ -91,34 +111,35 @@ public class MonitoringActivity extends Activity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.mainmenu, menu);
-	    return true;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.mainmenu, menu);
+		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-	    // Handle item selection
-	    switch (item.getItemId())
-	    {
-	        case R.id.settings:
+		// Handle item selection
+		switch (item.getItemId())
+		{
+		case R.id.settings:
 
-	            this.startActivity(new Intent(this, SettingsActivity.class));
-	        	break;	
-	            
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	    return false;
+			this.startActivity(new Intent(this, SettingsActivity.class));
+			break;
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		return false;
 	}
-	
-    @Subscribe
-    public void handleSomeEvent(EventHubCallStatusEvent event)
-    {
-        Toast.makeText(this,String.valueOf(event.getResultCode()),Toast.LENGTH_LONG).show();
-    }
-    
+
+	@Subscribe
+	public void handleSomeEvent(EventHubCallStatusEvent event)
+	{
+		Toast.makeText(this, String.valueOf(event.getResultCode()),
+				Toast.LENGTH_LONG).show();
+	}
+
 	private void verifyBluetooth()
 	{
 		try
@@ -135,8 +156,8 @@ public class MonitoringActivity extends Activity
 					@Override
 					public void onDismiss(DialogInterface dialog)
 					{
-						//finish();
-						//System.exit(0);
+						// finish();
+						// System.exit(0);
 					}
 				});
 				builder.show();
@@ -152,7 +173,7 @@ public class MonitoringActivity extends Activity
 				public void onDismiss(DialogInterface dialog)
 				{
 					finish();
-					//System.exit(0);
+					// System.exit(0);
 				}
 			});
 			builder.show();

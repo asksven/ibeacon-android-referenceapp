@@ -14,21 +14,17 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
-    <!-- This permission ensures that no other application can intercept your ADM messages.  -->
-    <permission
-        android:name="com.pwcgarage.ibeaconref.permission.RECEIVE_ADM_MESSAGE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="com.pwcgarage.ibeaconref.permission.RECEIVE_ADM_MESSAGE" />
-
-    <!-- This permission allows your app access to receive push notifications from ADM. -->
-    <uses-permission android:name="com.amazon.device.messaging.permission.RECEIVE" />
-
-    <!-- ADM uses WAKE_LOCK to keep the processor from sleeping when a message is received. -->
+    <!-- GCM uses WAKE_LOCK to keep the processor from sleeping when a message is received. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!-- required to generate UUIDs -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!--  GCM Permissions -->
+	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+	<permission android:name="com.pwcgarage.ibeaconref.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	<uses-permission android:name="com.pwcgarage.ibeaconref.permission.C2D_MESSAGE"/>
 
     <application
         android:name="BeaconReferenceApplication"
@@ -37,24 +33,18 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         
-        <!-- Amazon Device MEssaging stuff -->
-	    <!-- Enable ADM (optional feature), if not available certain features will not work -->
-	    <amazon:enable-feature android:name="com.amazon.device.messaging" android:required="false"/>
-	    
-	    <service android:name="com.pwcgarage.ibeaconref" android:exported="false" />
- 
-		<receiver android:name="com.pwcgarage.ibeaconref" android:permission="com.amazon.device.messaging.permission.SEND" >
- 
-		    <!-- To interact with ADM, your app must listen for the following intents. -->
+        <!-- Google Cloud MEssaging Stuff -->
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+        <!--  end GCM -->
+        		
+		<!-- GCM stuff -->
+		<receiver android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND">
 		    <intent-filter>
-				<action android:name="com.amazon.device.messaging.intent.REGISTRATION" />
-				<action android:name="com.amazon.device.messaging.intent.RECEIVE" />
-	 
-				  <!-- Replace the name in the category tag with your app's package name. -->
-				  <category android:name="com.pwcgarage.ibeaconref" />
-			</intent-filter>
+		        <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+		        <category android:name="com.pwcgarage.ibeaconref" />
+		    </intent-filter>
 		</receiver>
-		<!-- end ADM -->
+		<!--  end GCM -->
         
         <activity
             android:name="com.pwcgarage.ibeaconref.MonitoringActivity"

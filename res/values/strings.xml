@@ -8,4 +8,8 @@
     <string name="notification_entered_region">You just entered region %s</string>
     
     <string name="label_settings">Settings</string>
+    
+    <!-- GCM strings -->
+    <string name="gcm_register_success">GCM Registration Successful, RegId : %s</string>
+    <string name="gcm_register_error">GCM Registeration Unsuccessful: %s</string>
 </resources>
