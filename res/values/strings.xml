@@ -1,5 +1,6 @@
-<resources>
-
+<resources
+  xmlns:tools="http://schemas.android.com/tools"
+  tools:ignore="MissingTranslation" >
     <string name="app_name">iBeaconRef</string>
     <string name="debug_prefs_title">Debug</string>
     <string name="pref_debug_eventhub_summary">Check to use the debug Event Hub</string>
