@@ -32,6 +32,7 @@ import org.altbeacon.beacon.BeaconManager;
 import com.pwcgarage.ibeaconref.R;
 import com.pwcgarage.ibeaconref.eventbus.EventBus;
 import com.pwcgarage.ibeaconref.eventbus.EventHubCallStatusEvent;
+import com.pwcgarage.ibeaconref.pushmessaging.Constants;
 import com.pwcgarage.ibeaconref.pushmessaging.GooglePushMessageHandler;
 import com.pwcgarage.ibeaconref.restclients.EventHubRestClient;
 import com.squareup.otto.Subscribe;
@@ -69,6 +70,9 @@ public class MonitoringActivity extends Activity
 		logToDisplay("Application just launched");
 
 		// register with GCM
+		NotificationsManager.handleNotifications(this, Constants.GCM_SENDER_ID, GooglePushMessageHandler.class);
+		gcm = GoogleCloudMessaging.getInstance(this);
+		hub = new NotificationHub(Constants.NOTIFICATION_HUB_NAME, Constants.NOTIFICATION_HUB_CS, this);
 		GooglePushMessageHandler.registerWithNotificationHubs(gcm, hub, this);
 	}
 

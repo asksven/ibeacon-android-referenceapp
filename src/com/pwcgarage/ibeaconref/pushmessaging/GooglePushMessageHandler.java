@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -35,6 +36,7 @@ import com.pwcgarage.ibeaconref.R;
  */
 public class GooglePushMessageHandler extends NotificationsHandler
 {
+	private static String TAG = "GooglePushMessageHandler";
 	public static final int NOTIFICATION_ID = 1;
 	private NotificationManager mNotificationManager;
 	NotificationCompat.Builder builder;
@@ -80,14 +82,16 @@ public class GooglePushMessageHandler extends NotificationsHandler
 				try
 				{
 					String regid = gcm.register(Constants.GCM_SENDER_ID);
-					Toast.makeText(ctx, 
-							ctx.getString(R.string.gcm_register_success, hub.register(regid).getRegistrationId()),
-							Toast.LENGTH_SHORT).show();
+					Log.i(TAG, "GCM Registration: Success, ID=" + hub.register(regid).getRegistrationId());
+//					Toast.makeText(ctx, 
+//							ctx.getString(R.string.gcm_register_success, hub.register(regid).getRegistrationId()),
+//							Toast.LENGTH_SHORT).show();
 					
 				} catch (Exception e)
 				{
-					Toast.makeText(ctx,
-							ctx.getString(R.string.gcm_register_error, e.getMessage()), Toast.LENGTH_SHORT).show();
+					Log.e(TAG, "GCM Registration: Error " + e.getMessage());
+//					Toast.makeText(ctx,
+//							ctx.getString(R.string.gcm_register_error, e.getMessage()), Toast.LENGTH_SHORT).show();
 					return e;
 				}
 				return null;
